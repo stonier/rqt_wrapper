@@ -18,16 +18,9 @@ catkin_python_setup()
 # Installs
 ##############################################################################
 
-#install(
-#    PROGRAMS
-#        scripts/rocon_remocon_check_up
-#        scripts/rocon_remocon_sub
-#        scripts/rocon_remocon
-#        scripts/rqt_remocon
-#    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#)
-
-#install(
-#    DIRECTORY ui
-#    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#)
+install(
+    PROGRAMS
+        scripts/wrqt_graph
+        scripts/wrqt_robot_monitor
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

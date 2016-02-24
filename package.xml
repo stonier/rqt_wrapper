@@ -19,4 +19,7 @@
   <run_depend>rosgraph</run_depend>
   <run_depend>rqt_gui</run_depend>
   <run_depend>rqt_gui_py</run_depend>
+  <!-- wrqt wrapped plugins -->
+  <run_depend>rqt_plot</run_depend>
+  <run_depend>rqt_robot_monitor</run_depend>
 </package>
