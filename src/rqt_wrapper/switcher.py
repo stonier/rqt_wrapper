@@ -51,16 +51,20 @@ class Switcher(QObject):
             self._no_ros_master_dialog.raise_()
             if self._rqt_subprocess is not None:
                 self._rqt_subprocess_shutdown_by_us = True
-                self._rqt_subprocess.terminate()
+                self._rqt_subprocess.send_signal(signal.SIGINT)
+                # self._rqt_subprocess.terminate() # this is SIGTERM
                 self._rqt_subprocess = None
 
     def shutdown(self):
         '''
         Shutdowns from external signals or the abort button while waiting for a master.
         '''
+        print("Shutting down the ros master monitor")
         self._ros_master_monitor.shutdown()
         if self._rqt_subprocess is not None:
-            self._rqt_subprocess.terminate()
+            print("Terminating subprocess")
+            self._rqt_subprocess.send_signal(signal.SIGINT)
+            # self._rqt_subprocess.terminate() # this is SIGTERM
             self._rqt_subprocess = None
         QCoreApplication.instance().quit()
 
