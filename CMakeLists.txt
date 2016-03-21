@@ -22,5 +22,6 @@ install(
     PROGRAMS
         scripts/wrqt_graph
         scripts/wrqt_robot_monitor
+        scripts/wrqt_py_trees
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
