@@ -14,5 +14,5 @@ import sys
 ##############################################################################
 
 if __name__ == '__main__':
-    rqt_wrapper = rqt_wrapper.RQTWrapper('rqt_py_trees.behaviour_tree.RosBehaviourTree')
+    rqt_wrapper = rqt_wrapper.RQTWrapper('rqt_reconfigure.param_plugin.ParamPlugin')
     sys.exit(rqt_wrapper.exec_())
