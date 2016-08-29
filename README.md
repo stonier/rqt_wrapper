@@ -1,26 +1,49 @@
 # RQT Wrapper
 
-This package provides a class that lets you wrap a typical rqt program with code that
-allows you to automatically keep it alive and bring the rqt part up and down as a ROS master
-at the other end goes up and down.
+## Overview
+
+Wrap an rqt plugin so that it automagically goes down and comes up as a ROS master
+at the other end goes down and comes back up again.
 
 This solves the frustration of having to restart all of your rqt applications on
 your laptop/pc every time you teardown the robot and relaunch it again.
 
-# Status
+**WRQT Reconfigure - With ROS Core**
 
-Still beta.
+![With ROS Core](images/wrqt_reconfigure_ros.png)
 
-Major areas of concern are:
+**WRQT Reconfigure - Absent ROS Core**
 
-* Doesn't allow you to handle any of the arguments that rqt programs usually let you do.
-* Could feasibly be embedded in `rqt_gui` and `qt_gui` where plugins can be loaded in subprocesses (the `--multi-process` option)
-* Needs optional policies for the trigger that brings down the rqt plugin
+![Absent ROS Core](images/wrqt_reconfigure_noros.png)
 
-# Usage
+The source code is released under a [BSD 3-Clause license](LICENSE).
 
-Todo.
+## Status
 
-# Programs
+Beta. Areas to be addressed:
 
-Many of the common rqt programs are recreated here with the `wrqt_xxx` prefix.
+* Desktop notifications instead of a dialog while ros is down.
+* Reflect all of the arguments that rqt programs usually let you handle.
+
+## Usage
+
+Just two lines. This example wraps the `rqt_reconfigure` plugin:
+
+```python
+import rqt_wrapper
+import sys
+
+if __name__ == '__main__':
+    rqt_wrapper = rqt_wrapper.RQTWrapper('rqt_reconfigure.param_plugin.ParamPlugin')
+    sys.exit(rqt_wrapper.exec_())
+```
+
+## Programs
+
+Some of the common rqt programs are recreated here with the `wrqt_xxx` prefix and
+deposited into the global bin directory.
+
+* `wrqt_graph`
+* `wrqt_reconfigure`
+* `wrqt_robot_monitor`
+
