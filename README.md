@@ -22,8 +22,8 @@ The source code is released under a [BSD 3-Clause license](LICENSE).
 
 Beta. Areas to be addressed:
 
-* Desktop notifications instead of a dialog while ros is down.
-* Reflect all of the arguments that rqt programs usually let you handle.
+* Desktop notifications instead of a dialog while ros is down, #4.
+* Reflect all of the arguments that rqt programs usually let you handle, #5.
 
 ## Usage
 
