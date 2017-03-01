@@ -13,15 +13,17 @@ import rocon_python_utils.system
 import signal
 import tempfile
 
-# PySide is LGPL, pyqt is GPL, python_qt_bindings are ROS bindings around both
-# We prefer LGPL, so convert over later so we can get proper indexing
-from python_qt_binding.QtGui import QApplication, QMessageBox
-from python_qt_binding.QtCore import Qt, QCoreApplication, QObject, QTimer, Signal, Slot
+try:  # indigo
+    from python_qt_binding.QtGui import QApplication, QMessageBox
+except ImportError:  # kinetic+ (pyqt5)
+    from python_qt_binding.QtWidgets import QApplication, QMessageBox
 
+from python_qt_binding.QtCore import Qt, QCoreApplication, QObject, QTimer, Signal, Slot
 
 ##############################################################################
 # Classes
 ##############################################################################
+
 
 class Switcher(QObject):
     # PySide signals are always defined as class attributes (GPL Pyqt4 Signals use pyqtSignal)
