@@ -7,22 +7,39 @@
 # Imports
 ##############################################################################
 
-import sys
-from .ros_masters import RosMasterMonitor
+import os
 import rocon_python_utils.system
+import rospkg
 import signal
+import sys
 import tempfile
 
 try:  # indigo
-    from python_qt_binding.QtGui import QApplication, QMessageBox
+    from python_qt_binding.QtGui import QApplication, QMenu, QMessageBox, QSystemTrayIcon, QWidget
 except ImportError:  # kinetic+ (pyqt5)
-    from python_qt_binding.QtWidgets import QApplication, QMessageBox
+    from python_qt_binding.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon, QWidget
 
+from python_qt_binding.QtGui import QIcon
 from python_qt_binding.QtCore import Qt, QCoreApplication, QObject, QTimer, Signal, Slot
+
+from .ros_masters import RosMasterMonitor
 
 ##############################################################################
 # Classes
 ##############################################################################
+
+
+class SystemTrayIcon(QSystemTrayIcon):
+    def __init__(self, shutdown_callback, parent=None):
+        super(SystemTrayIcon, self).__init__(parent)
+        rospack = rospkg.RosPack()
+        icon_path = os.path.join(rospack.get_path('rqt_wrapper'), 'resources', 'rqt.png')
+        self.setIcon(QIcon(icon_path))
+        self.context_menu = QMenu(parent)
+        self.app_exit = self.context_menu.addAction("Exit")
+        self.setContextMenu(self.context_menu)
+        self.setVisible(True)
+        self.app_exit.triggered.connect(shutdown_callback)
 
 
 class Switcher(QObject):
@@ -33,9 +50,14 @@ class Switcher(QObject):
         super(Switcher, self).__init__()
         self._rqt_plugin_name = rqt_plugin_name
         self._rqt_subprocess = None
-        self._no_ros_master_dialog = QMessageBox(QMessageBox.Warning, self.tr(self._rqt_plugin_name), self.tr("Waiting for the ROS Master to become available."))
-        self._no_ros_master_abort_button = self._no_ros_master_dialog.addButton(QMessageBox.Abort)
-        self._no_ros_master_abort_button.clicked.connect(self.shutdown)
+        self.system_tray_available = QSystemTrayIcon.isSystemTrayAvailable()
+        if self.system_tray_available:
+            self.system_tray_icon = SystemTrayIcon(self.shutdown)
+            self.system_tray_icon.show()
+        else:
+            self._no_ros_master_dialog = QMessageBox(QMessageBox.Warning, self.tr(self._rqt_plugin_name), self.tr("Waiting for the ROS Master to become available."))
+            self._no_ros_master_abort_button = self._no_ros_master_dialog.addButton(QMessageBox.Abort)
+            self._no_ros_master_abort_button.clicked.connect(self.shutdown)
         self.signal_master_changed_state.connect(self.switch_state, type=Qt.QueuedConnection)
         self._ros_master_monitor = RosMasterMonitor(period=1, callback_function=self._master_changed_state)
         self._rqt_subprocess_shutdown_by_us = False
@@ -46,11 +68,18 @@ class Switcher(QObject):
         :param bool new_master_found: true when a new master is detected, false when a master has disappeared.
         '''
         if new_master_found:
-            self._no_ros_master_dialog.hide()
+            if self.system_tray_available:
+                print("Change system tray icon?")
+            else:
+                self._no_ros_master_dialog.hide()
             self._launch_rocon_remocon()
         else:
-            self._no_ros_master_dialog.show()
-            self._no_ros_master_dialog.raise_()
+            if self.system_tray_available:
+                self.system_tray_icon.showMessage("RQT Wrapper", self.tr("Waiting for the ROS Master to become available."))
+                print("Change system tray icon to show master disappeared?")
+            else:
+                self._no_ros_master_dialog.show()
+                self._no_ros_master_dialog.raise_()
             if self._rqt_subprocess is not None:
                 self._rqt_subprocess_shutdown_by_us = True
                 self._rqt_subprocess.send_signal(signal.SIGINT)
