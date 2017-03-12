@@ -3,10 +3,9 @@
 ## Overview
 
 Wrap an rqt plugin so that it automagically goes down and comes up as a ROS master
-at the other end goes down and comes back up again.
-
-This solves the frustration of having to restart all of your rqt applications on
-your laptop/pc every time you teardown the robot and relaunch it again.
+at the other end goes down and comes back up again. This solves the frustration of
+having to restart all of your rqt applications on your laptop/pc every time you
+teardown the robot and relaunch it again. Incidentally it will save time and effort as well.
 
 **WRQT Reconfigure - With ROS Core**
 
